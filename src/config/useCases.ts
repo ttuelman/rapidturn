@@ -4,95 +4,95 @@ export interface UseCase {
   id: string;
   title: string;
   story: string;
-  threadLabel: string;
   threadUrl: string;
   config: ShaftConfig;
 }
 
+const JOURNAL_OFF = {
+  enabled: false,
+  start: 0,
+  length: 1.5,
+  diameter: 0.541,
+} as const;
+
 /**
- * Public Chief Delphi patterns only. No team names or unsourced quotes.
- * Thread URLs are the ones cited in the Rapid Turn CD research brief.
+ * Cards and configs follow uploads/USE_CASES_CD.md.
+ * Stories stay in FRC language. No team names or unsourced quotes.
+ * “Discussed on Chief Delphi” uses the thread URL from that doc (or the CD
+ * thread the research brief cites when the card only points at the research doc).
  */
 export const USE_CASES: UseCase[] = [
   {
-    id: "between-steps",
-    title: "Length that is not a 0.5 in step",
+    id: "wcd-tap",
+    title: "WCD wheel retention — tap + bolt + washer",
     story:
-      "FRC vendors often sell 1/2 in hex in fixed 0.5 in increments (plus a long untapped bar). Teams still cut to the length in CAD — 4.375 in is a typical gap. This preset is both ends #10-32 × 0.50 in, the REV-style tap.",
-    threadLabel: "Hex Shaft — REV vs VEX vs AndyMark",
+      "Live axle / WCD: tap the shaft end, retain the wheel with bolt + washer (often 1/4-20 on ThunderHex-style, #10-32 on REV rounded hex). Collars eat track width; tap+bolt is the common compact pattern.",
+    threadUrl: "https://www.chiefdelphi.com/t/how-to-secure-wheels-on-a-wcd-chassis/398842",
+    config: {
+      length: 7,
+      endA: "1/4-20",
+      endB: "none",
+      grooves: [],
+      journal: { ...JOURNAL_OFF },
+    },
+  },
+  {
+    id: "rev-both-ends",
+    title: "REV-style shaft — #10-32 both ends, custom length",
+    story:
+      "REV sells fixed 0.5 in steps with both ends #10-32. Teams often need a length between steps (e.g. 4.375 in) or only one end tapped.",
     threadUrl: "https://www.chiefdelphi.com/t/hex-shaft-rev-vs-vex-vs-andymark/167316",
     config: {
       length: 4.375,
       endA: "10-32",
       endB: "10-32",
       grooves: [],
-      journal: { enabled: false, start: 0.75, length: 1, diameter: 0.541 },
+      journal: { ...JOURNAL_OFF },
     },
   },
   {
-    id: "wcd-tap",
-    title: "WCD wheel retention: tap + bolt + washer",
+    id: "eclip-mid",
+    title: "Gearbox / mid-shaft — E-clip groove",
     story:
-      "The common no-lathe retention path on a West Coast drive live axle is a tapped end, bolt, and washer. #10-32 shows up on REV-style shafts; 1/4-20 on ThunderHex. This preset is one-end #10-32 so you can keep the other end blank.",
-    threadLabel: "How to secure wheels on a WCD chassis?",
-    threadUrl: "https://www.chiefdelphi.com/t/how-to-secure-wheels-on-a-wcd-chassis/398842",
+      "Lathe teams use E-clips / side-mount rings for compact axial retention on hex without stretching a snap ring over corners. Groove position is the design variable.",
+    threadUrl: "https://www.chiefdelphi.com/t/retaining-rings-and-e-clips/464806",
     config: {
       length: 5,
-      endA: "10-32",
-      endB: "none",
-      grooves: [],
-      journal: { enabled: false, start: 0.75, length: 1, diameter: 0.541 },
-    },
-  },
-  {
-    id: "thunderhex-tap",
-    title: "1/4-20 ends (ThunderHex practice)",
-    story:
-      "ThunderHex is commonly pre-bored ~0.2 in and tapped 1/4-20. Rapid Turn offers that size next to #10-32 so the shaft matches the screws already in the tote.",
-    threadLabel: "ThunderHex Bearing Explained",
-    threadUrl: "https://www.chiefdelphi.com/t/thunderhex-bearing-explained/139200",
-    config: {
-      length: 4,
-      endA: "1/4-20",
-      endB: "1/4-20",
-      grooves: [],
-      journal: { enabled: false, start: 0.75, length: 1, diameter: 0.541 },
-    },
-  },
-  {
-    id: "eclip",
-    title: "Side-mount E-clip grooves",
-    story:
-      "Lathe teams use E-clip / side-mount rings for light, vibration-proof retention. They install radially on hex — no corner round-over. InFlight described a 1/2 in E-clip groove about 0.046 in wide × Ø0.396 in. Two grooves from End A, centers at 0.35 in and 3.65 in.",
-    threadLabel: "Shaft Collars",
-    threadUrl: "https://www.chiefdelphi.com/t/shaft-collars/166169",
-    config: {
-      length: 4,
       endA: "none",
       endB: "none",
-      grooves: [
-        { id: "uc-eclip-a", position: 0.35 },
-        { id: "uc-eclip-b", position: 3.65 },
-      ],
-      journal: { enabled: false, start: 0.75, length: 1, diameter: 0.541 },
+      grooves: [{ id: "uc-eclip", position: 0.75 }],
+      journal: { ...JOURNAL_OFF },
     },
   },
   {
     id: "journal",
-    title: "ThunderHex journal for 13.75 mm bearings",
+    title: "Round bearing journal — turn-down / ThunderHex-compatible OD",
     story:
-      "Teams with lathes turn hex corners down to a ~13.75 mm / 0.541 in circle so the shaft runs in dedicated round bearings. Hex outside the journal stays as a shoulder/stop. A 0.500 in target is the other common round-bearing journal.",
-    threadLabel: "ThunderHex inspired question",
-    threadUrl: "https://www.chiefdelphi.com/t/thunderhex-inspired-question/144975",
+      "Teams with lathes turn hex corners down for round bearings (~13.75 mm / ThunderHex-style) and may leave a hex shoulder as a stop. COTS ThunderHex exists so teams without lathes can skip this — Rapid Turn does it to CAD.",
+    threadUrl: "https://www.chiefdelphi.com/t/thunderhex-bearing-explained/139200",
     config: {
-      length: 4,
+      length: 7,
       endA: "1/4-20",
       endB: "none",
       grooves: [],
-      journal: { enabled: true, start: 0.75, length: 1.5, diameter: 0.541 },
+      journal: { enabled: true, start: 0, length: 1.5, diameter: 0.541 },
+    },
+  },
+  {
+    id: "between-rev",
+    title: "Between REV sizes — intake / mechanism shaft",
+    story:
+      "Mechanism shafts where fixed COTS lengths force spacers or a bandsaw cut. Configure exact CAD length ≤ 8 in with the retention you designed.",
+    threadUrl: "https://www.chiefdelphi.com/t/hex-shaft-rev-vs-vex-vs-andymark/167316",
+    config: {
+      length: 3.25,
+      endA: "10-32",
+      endB: "none",
+      grooves: [],
+      journal: { ...JOURNAL_OFF },
     },
   },
 ];
 
 export const USE_CASE_DISCLAIMER =
-  "These are public Chief Delphi patterns, written in FRC shop language. Not a FIRST or Chief Delphi endorsement.";
+  "Examples illustrate common patterns from public Chief Delphi discussion. Not endorsed by FIRST or Chief Delphi.";

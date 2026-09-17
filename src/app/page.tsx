@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Configurator } from "@/components/Configurator";
 import { UseCaseCards } from "@/components/UseCaseCards";
 
@@ -18,7 +19,13 @@ export default function HomePage() {
         </p>
       </div>
       <div className="mt-8">
-        <Configurator />
+        <Suspense
+          fallback={
+            <div className="h-72 animate-pulse rounded-2xl bg-steel-100 sm:h-80 lg:h-[28rem]" />
+          }
+        >
+          <Configurator />
+        </Suspense>
       </div>
       <UseCaseCards />
     </div>

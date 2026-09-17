@@ -9,10 +9,11 @@ export function UseCaseCards() {
           From Chief Delphi
         </p>
         <h2 className="mt-2 text-2xl font-bold text-steel-900 sm:text-3xl">
-          Configs teams already machine
+          Built for how FRC actually retains hex
         </h2>
         <p className="mt-3 text-steel-600">
-          Open a preset, then edit the URL params or the controls. No login.
+          Open a preset into the configurator, then edit the controls or the URL params. No
+          login.
         </p>
       </div>
 
@@ -40,7 +41,6 @@ export function UseCaseCards() {
                 Discussed on Chief Delphi
               </a>
             </div>
-            <p className="mt-3 font-mono text-[11px] text-steel-400">{uc.threadLabel}</p>
           </article>
         ))}
       </div>

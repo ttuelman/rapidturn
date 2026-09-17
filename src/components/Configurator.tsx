@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   ECLIP_GROOVE,
@@ -58,8 +59,11 @@ const inputClass =
   "w-full rounded-lg border border-steel-200 bg-white px-3 py-2 text-steel-900 focus:border-rapid-500 focus:outline-none focus:ring-2 focus:ring-rapid-200";
 
 export function Configurator() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchKey = searchParams.toString();
   const [config, setConfig] = useState<ShaftConfig>(createDefaultConfig);
-  const [urlReady, setUrlReady] = useState(false);
 
   const set = (patch: Partial<ShaftConfig> | ((c: ShaftConfig) => ShaftConfig)) => {
     setConfig((prev) =>
@@ -68,31 +72,16 @@ export function Configurator() {
   };
 
   useEffect(() => {
-    if (hasConfigQuery(window.location.search)) {
-      setConfig(parseConfigQuery(window.location.search));
-    }
-    setUrlReady(true);
-  }, []);
+    if (!hasConfigQuery(searchKey)) return;
+    const incoming = parseConfigQuery(searchKey);
+    setConfig((prev) => (configToQuery(prev) === configToQuery(incoming) ? prev : incoming));
+  }, [searchKey]);
 
   useEffect(() => {
-    if (!urlReady) return;
     const query = configToQuery(config);
-    const next = `${window.location.pathname}?${query}`;
-    const current = `${window.location.pathname}${window.location.search}`;
-    if (current !== next) {
-      window.history.replaceState(null, "", next);
-    }
-  }, [config, urlReady]);
-
-  useEffect(() => {
-    const onPop = () => {
-      if (hasConfigQuery(window.location.search)) {
-        setConfig(parseConfigQuery(window.location.search));
-      }
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
+    if (searchKey === query) return;
+    router.replace(`${pathname}?${query}`, { scroll: false });
+  }, [config, pathname, router, searchKey]);
 
   const validation = useMemo(() => validateShaft(config), [config]);
   const estimate = useMemo(() => estimateShaft(config), [config]);
