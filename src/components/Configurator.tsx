@@ -57,14 +57,9 @@ function Field({
 const inputClass =
   "w-full rounded-lg border border-steel-200 bg-white px-3 py-2 text-steel-900 focus:border-rapid-500 focus:outline-none focus:ring-2 focus:ring-rapid-200";
 
-function initialConfig(): ShaftConfig {
-  if (typeof window === "undefined") return createDefaultConfig();
-  if (!hasConfigQuery(window.location.search)) return createDefaultConfig();
-  return parseConfigQuery(window.location.search);
-}
-
 export function Configurator() {
-  const [config, setConfig] = useState<ShaftConfig>(initialConfig);
+  const [config, setConfig] = useState<ShaftConfig>(createDefaultConfig);
+  const [urlReady, setUrlReady] = useState(false);
 
   const set = (patch: Partial<ShaftConfig> | ((c: ShaftConfig) => ShaftConfig)) => {
     setConfig((prev) =>
@@ -73,13 +68,21 @@ export function Configurator() {
   };
 
   useEffect(() => {
+    if (hasConfigQuery(window.location.search)) {
+      setConfig(parseConfigQuery(window.location.search));
+    }
+    setUrlReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!urlReady) return;
     const query = configToQuery(config);
     const next = `${window.location.pathname}?${query}`;
     const current = `${window.location.pathname}${window.location.search}`;
     if (current !== next) {
       window.history.replaceState(null, "", next);
     }
-  }, [config]);
+  }, [config, urlReady]);
 
   useEffect(() => {
     const onPop = () => {
