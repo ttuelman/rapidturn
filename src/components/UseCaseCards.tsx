@@ -28,6 +28,10 @@ export function UseCaseCards() {
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <a
                 href={configPath(uc.config)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.assign(configPath(uc.config));
+                }}
                 className="inline-flex rounded-lg bg-rapid-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-rapid-700"
               >
                 Open this config

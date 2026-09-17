@@ -74,8 +74,9 @@ export function Configurator() {
   };
 
   useEffect(() => {
-    if (!hasConfigQuery(searchKey)) return;
-    const incoming = parseConfigQuery(searchKey);
+    const raw = window.location.search || searchKey;
+    if (!hasConfigQuery(raw)) return;
+    const incoming = parseConfigQuery(raw);
     setConfig((prev) => {
       if (configToQuery(prev) === configToQuery(incoming)) return prev;
       skipWrite.current = true;
