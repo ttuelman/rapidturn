@@ -13,9 +13,9 @@ export default function HomePage() {
           0.5&quot; hex shafts, configured for the robot
         </h1>
         <p className="mt-4 text-base text-steel-600 sm:text-lg">
-          Cut length, tap each end, drop E-clip grooves, and turn a journal. Instant 3D
-          preview and a price estimate — download a STEP that matches. Nothing is for sale
-          yet.
+          Cut length, tap each end, drop E-clip grooves, and turn a journal. The live 2D
+          drawing is the source of truth — 3D is for spatial feel. Download a STEP that
+          matches. Nothing is for sale yet.
         </p>
       </div>
       <div className="mt-8">

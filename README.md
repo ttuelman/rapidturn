@@ -1,6 +1,6 @@
 # Rapid Turn
 
-Free web configurator for **0.5 in 7075-T6 FRC hex shafts**. Set length, tap each end, add E-clip grooves and a turn-down journal, inspect a live 3D preview, read a **not-for-sale** estimate, and download a STEP that matches the solid on screen.
+Free web configurator for **0.5 in 7075-T6 FRC hex shafts**. Set length, tap each end, add E-clip grooves and a turn-down journal, inspect a live **2D shop drawing** (source of truth) plus 3D for spatial feel, read a **not-for-sale** estimate, and download a STEP that matches the config.
 
 Nothing is sold here. There is no Stripe, waitlist, or checkout. Buy is gated for later.
 
@@ -33,8 +33,9 @@ A journal Ø ≥ modeled AF clips hex **corners** to that circle (ThunderHex-sty
 ## Stack
 
 - **Next.js 15** (App Router) + TypeScript + Tailwind CSS + React 19
-- **Three.js** for the preview (OrbitControls, no extra UI kit)
-- **Client-side STEP** (no CAD kernel, no API). `src/lib/geometry.ts` builds one watertight mesh; `src/lib/step.ts` writes an AP203 `MANIFOLD_SOLID_BREP` in **inches**. Preview and download share that mesh, so the file matches the config.
+- **2D drawing** (`src/lib/drawing.ts` + `src/components/ShaftDrawing.tsx`): orthographic side elevation with shop-style callouts for overall length, end taps + depth, E-clip position/width/Ø, and journal extent/Ø. Updates with the same config / shareable URL as 3D and STEP.
+- **Three.js** for spatial 3D (OrbitControls, no extra UI kit)
+- **Client-side STEP** (no CAD kernel, no API). `src/lib/geometry.ts` builds one watertight mesh; `src/lib/step.ts` writes an AP203 `MANIFOLD_SOLID_BREP` in **inches**. Drawing, preview, and download share that config, so the file matches what you see.
 - Placeholder rates live in **`src/config/pricing.ts`** only.
 - Shareable config URLs (no login): `/?l=4.375&ea=10-32&eb=10-32&g=0.35,3.65&j=0.75,1.5,0.541`
 
@@ -48,14 +49,14 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
-npm test          # geometry, estimate, STEP, validation
+npm test          # geometry, estimate, STEP, validation, drawing, share URLs
 npm run build     # production build
 npm start
 ```
 
 ## Pages
 
-- `/` — configurator: controls, 3D preview, estimate, Download STEP, Chief Delphi use-case cards
+- `/` — configurator: 2D drawing (source of truth), 3D spatial preview, controls, estimate, Download STEP, Chief Delphi use-case cards
 - `/about` — short product note
 - Query params load a config so “Open this config” and Copy link work without an account
 
@@ -68,4 +69,4 @@ There is no shop checkout, machine queue, or G-code path in v1.
 - Units: **INCH** (`CONVERSION_BASED_UNIT`).
 - Faceted planar B-rep (48-sample rings) so hex flats stay exact and rounds stay close. Good for robot CAD import; not a substitute for a CAM feature tree.
 
-If a future CAM pipeline needs kernel-quality NURBS, swap `buildStep()` for OpenCascade/replicad and keep `buildShaftMesh()` as the preview source of truth.
+If a future CAM pipeline needs kernel-quality NURBS, swap `buildStep()` for OpenCascade/replicad and keep `buildShaftMesh()` as the 3D preview mesh. The 2D drawing (`buildDrawingModel`) stays the on-screen source of truth for configured dimensions.
