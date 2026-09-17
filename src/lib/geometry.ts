@@ -364,12 +364,31 @@ export function buildShaftMesh(config: ShaftConfig): ShaftMesh {
   };
 }
 
+function vertexTint(p: Vec3, mesh: ShaftMesh): [number, number, number] {
+  const r = Math.hypot(p.x, p.y);
+  if (r < 0.12) return [0.22, 0.25, 0.28];
+  const iv = mesh.intervals.find((i) => p.z >= i.z0 - 1e-6 && p.z <= i.z1 + 1e-6);
+  if (iv?.clipDiameter != null && Math.abs(iv.clipDiameter - ECLIP_GROOVE.diameter) < 1e-6) {
+    return [0.35, 0.4, 0.48];
+  }
+  if (iv?.clipDiameter != null) return [0.78, 0.62, 0.28];
+  return [0.78, 0.81, 0.84];
+}
+
 export function meshToPositions(mesh: ShaftMesh): Float32Array {
+  return meshToAttributes(mesh).positions;
+}
+
+export function meshToAttributes(mesh: ShaftMesh): {
+  positions: Float32Array;
+  colors: Float32Array;
+} {
   let count = 0;
   for (const face of mesh.faces) {
     count += (face.length - 2) * 3;
   }
   const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
   let w = 0;
   for (const face of mesh.faces) {
     const v0 = mesh.vertices[face[0]];
@@ -377,11 +396,16 @@ export function meshToPositions(mesh: ShaftMesh): Float32Array {
       const a = mesh.vertices[face[i]];
       const b = mesh.vertices[face[i + 1]];
       for (const p of [v0, a, b]) {
-        positions[w++] = p.x;
-        positions[w++] = p.y;
-        positions[w++] = p.z;
+        positions[w] = p.x;
+        positions[w + 1] = p.y;
+        positions[w + 2] = p.z;
+        const [cr, cg, cb] = vertexTint(p, mesh);
+        colors[w] = cr;
+        colors[w + 1] = cg;
+        colors[w + 2] = cb;
+        w += 3;
       }
     }
   }
-  return positions;
+  return { positions, colors };
 }
