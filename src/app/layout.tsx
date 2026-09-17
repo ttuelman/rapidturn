@@ -37,6 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="hover:text-rapid-600">
                 Configurator
               </Link>
+              <Link href="/#use-cases" className="hover:text-rapid-600">
+                Use cases
+              </Link>
               <Link href="/about" className="hover:text-rapid-600">
                 About
               </Link>

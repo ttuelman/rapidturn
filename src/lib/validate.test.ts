@@ -9,19 +9,24 @@ describe("validateShaft", () => {
     assert.equal(r.valid, true);
   });
 
-  it("rejects length over 8 in", () => {
-    const r = validateShaft({ ...createDefaultConfig(), length: 8.01 });
-    assert.equal(r.valid, false);
-    assert.ok(r.errors.some((e) => /8\.00/.test(e)));
+  it("allows CAD lengths over 8 in and flags them as CAD-only", () => {
+    const r = validateShaft({ ...createDefaultConfig(), length: 12 });
+    assert.equal(r.valid, true);
+    assert.ok(r.warnings.some((w) => /CAD-only/.test(w)));
   });
 
-  it("clamps length and keeps grooves on the shaft", () => {
+  it("rejects length over the 36 in CAD soft max", () => {
+    const r = validateShaft({ ...createDefaultConfig(), length: 36.01 });
+    assert.equal(r.valid, false);
+  });
+
+  it("clamps length to the CAD max and keeps grooves on the shaft", () => {
     const clamped = clampConfig({
       ...createDefaultConfig(),
-      length: 9,
+      length: 40,
       grooves: [{ id: "g", position: 8.9 }],
     });
-    assert.equal(clamped.length, 8);
+    assert.equal(clamped.length, 36);
     const r = validateShaft(clamped);
     assert.equal(r.valid, true);
   });

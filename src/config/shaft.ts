@@ -18,7 +18,11 @@ export const MATERIAL_NAME = "7075-T6 aluminum";
 export const MATERIAL_ID = "al7075t6";
 
 export const LENGTH_MIN = 1.0;
-export const LENGTH_MAX = 8.0;
+/** Rapid Turn machines up to this length. Longer is CAD-only. */
+export const LENGTH_MFG_MAX = 8.0;
+/** Soft max for the configurator / STEP download. */
+export const LENGTH_CAD_MAX = 36.0;
+export const LENGTH_MAX = LENGTH_CAD_MAX;
 export const LENGTH_DEFAULT = 4.0;
 export const LENGTH_STEP = 0.0625;
 

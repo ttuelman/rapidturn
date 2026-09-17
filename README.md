@@ -10,7 +10,7 @@ Nothing is sold here. There is no Stripe, waitlist, or checkout. Buy is gated fo
 |------|--------|
 | Profile | 0.5 in hex. **Modeled AF 0.4975 in** (FRC fit 0.496–0.499 in) |
 | Material | 7075-T6 aluminum (display only — one material) |
-| Length | 1.00–**8.00 in** continuous, 0.0625 in steps. Hard cap 8 in. Default 4.00 in |
+| Length | 1.00–**36.00 in** in CAD (0.0625 in steps). **Rapid Turn machines ≤ 8.00 in**; longer is CAD-only. Default 4.00 in |
 | End taps | Each end independently: None, **#10-32 × 0.50 in**, **1/4-20 × 0.50 in** |
 | E-clip grooves | 0–N, positionable from End A. Side-mount / radial install (no corner round-over) |
 | Journal | One turn-down: start, length, target round Ø (default ThunderHex **0.541 in / 13.75 mm**, or **0.500 in**) |
@@ -36,6 +36,7 @@ A journal Ø ≥ modeled AF clips hex **corners** to that circle (ThunderHex-sty
 - **Three.js** for the preview (OrbitControls, no extra UI kit)
 - **Client-side STEP** (no CAD kernel, no API). `src/lib/geometry.ts` builds one watertight mesh; `src/lib/step.ts` writes an AP203 `MANIFOLD_SOLID_BREP` in **inches**. Preview and download share that mesh, so the file matches the config.
 - Placeholder rates live in **`src/config/pricing.ts`** only.
+- Shareable config URLs (no login): `/?l=4.375&ea=10-32&eb=10-32&g=0.35,3.65&j=0.75,1.5,0.541`
 
 ## Run locally
 
@@ -54,8 +55,9 @@ npm start
 
 ## Pages
 
-- `/` — configurator: controls, 3D preview, estimate, Download STEP
+- `/` — configurator: controls, 3D preview, estimate, Download STEP, Chief Delphi use-case cards
 - `/about` — short product note
+- Query params load a config so “Open this config” and Copy link work without an account
 
 There is no shop checkout, machine queue, or G-code path in v1.
 
