@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ECLIP_GROOVE,
   GROOVE_MAX_COUNT,
@@ -65,6 +65,7 @@ export function Configurator() {
   const searchParams = useSearchParams();
   const searchKey = searchParams.toString();
   const [config, setConfig] = useState<ShaftConfig>(createDefaultConfig);
+  const skipWrite = useRef(true);
 
   const set = (patch: Partial<ShaftConfig> | ((c: ShaftConfig) => ShaftConfig)) => {
     setConfig((prev) =>
@@ -75,10 +76,18 @@ export function Configurator() {
   useEffect(() => {
     if (!hasConfigQuery(searchKey)) return;
     const incoming = parseConfigQuery(searchKey);
-    setConfig((prev) => (configToQuery(prev) === configToQuery(incoming) ? prev : incoming));
+    setConfig((prev) => {
+      if (configToQuery(prev) === configToQuery(incoming)) return prev;
+      skipWrite.current = true;
+      return incoming;
+    });
   }, [searchKey]);
 
   useEffect(() => {
+    if (skipWrite.current) {
+      skipWrite.current = false;
+      return;
+    }
     const query = configToQuery(config);
     if (searchKey === query) return;
     router.replace(`${pathname}?${query}`, { scroll: false });
