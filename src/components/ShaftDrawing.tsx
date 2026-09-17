@@ -15,9 +15,9 @@ const DIM_SOFT = "#3d7ab8";
 const OUTLINE = "#1f242b";
 
 const FONT_DIM =
-  "600 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-const FONT_NOTE = "500 11px ui-sans-serif, system-ui, sans-serif";
-const FONT_TINY = "500 10px ui-sans-serif, system-ui, sans-serif";
+  "600 14px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+const FONT_NOTE = "500 12px ui-sans-serif, system-ui, sans-serif";
+const FONT_TINY = "500 11px ui-sans-serif, system-ui, sans-serif";
 
 function mapX(z: number, length: number): number {
   return PAD_L + (z / Math.max(length, 0.01)) * PLOT_W;
@@ -50,12 +50,12 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
     88,
   );
   const maxGrooveLevel = grooveLevels.length ? Math.max(...grooveLevels) : 0;
-  const grooveBand = grooves.length ? 24 + (maxGrooveLevel + 1) * 30 : 0;
-  const journalBand = journal ? 56 : 0;
-  const tapBand = 34;
-  const topPad = 22 + grooveBand + journalBand + tapBand;
-  const bottomPad = 74;
-  const cy = topPad + HEX_HALF + 6;
+  const grooveBand = grooves.length ? 28 + (maxGrooveLevel + 1) * 32 : 0;
+  const journalBand = journal ? 70 : 0;
+  const tapBand = 40;
+  const topPad = 24 + grooveBand + journalBand + tapBand;
+  const bottomPad = 86;
+  const cy = topPad + HEX_HALF + 8;
   const vbH = cy + HEX_HALF + bottomPad;
 
   const x0 = mapX(0, length);
@@ -64,8 +64,8 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
   const tapB = taps.find((t) => t.end === "B");
   const grooveLabelYs = grooveLevels.map((level) => 18 + (maxGrooveLevel - level) * 30);
 
-  const tapDimY = cy - HEX_HALF - 18;
-  const journalDimY = tapDimY - (journal ? 38 : 0);
+  const tapDimY = cy - HEX_HALF - 22;
+  const journalDimY = tapDimY - (journal ? 50 : 0);
 
   const summary = notes.join(" ");
 
@@ -86,14 +86,18 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
       </div>
 
       <div className="overflow-x-auto">
+        <div className="min-w-[38rem] lg:min-w-0">
         <svg
           viewBox={`0 0 ${VB_W} ${vbH}`}
-          className="h-auto w-full min-w-[24rem]"
+          width="100%"
+          height="auto"
+          preserveAspectRatio="xMidYMid meet"
+          className="block h-auto w-full"
           role="img"
           aria-label={summary}
           data-testid="shaft-drawing"
         >
-          <title>{summary}</title>
+          <title>Shaft side elevation</title>
           <line
             x1={PAD_L - 18}
             x2={VB_W - PAD_R + 18}
@@ -200,16 +204,15 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
               endX={x0}
               depthX={mapX(tapA.depth, length)}
               y={tapDimY}
-              side="left"
               label={tapA.label}
               depthLabel={fmtIn(tapA.depth)}
               extendFrom={cy - HEX_HALF}
             />
           ) : (
             <text
-              x={x0 - 4}
-              y={tapDimY - 4}
-              textAnchor="end"
+              x={x0}
+              y={tapDimY - 2}
+              textAnchor="middle"
               style={{ font: FONT_NOTE }}
               fill="#6b7785"
             >
@@ -221,16 +224,15 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
               endX={xL}
               depthX={mapX(length - tapB.depth, length)}
               y={tapDimY}
-              side="right"
               label={tapB.label}
               depthLabel={fmtIn(tapB.depth)}
               extendFrom={cy - HEX_HALF}
             />
           ) : (
             <text
-              x={xL + 4}
-              y={tapDimY - 4}
-              textAnchor="start"
+              x={xL}
+              y={tapDimY - 2}
+              textAnchor="middle"
               style={{ font: FONT_NOTE }}
               fill="#6b7785"
             >
@@ -244,18 +246,27 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
                 x1={mapX(journal.start, length)}
                 x2={mapX(journal.start + journal.length, length)}
                 y={journalDimY}
-                label={`${fmtIn(journal.length)} JOURNAL`}
+                label={fmtIn(journal.length)}
                 extendFrom={cy - mapHalf(Math.min(journal.diameter, HEX_MODEL_AF))}
               />
               <text
                 x={mapX(journal.start + journal.length / 2, length)}
-                y={journalDimY - 14}
+                y={journalDimY - 16}
                 textAnchor="middle"
                 style={{ font: FONT_DIM }}
                 fill={DIM}
               >
-                Ø{journal.diameter.toFixed(3)}
-                {journal.clipsCorners ? " CLIP CORNERS" : " ROUND"} · START {fmtIn(journal.start)}
+                JOURNAL Ø{journal.diameter.toFixed(3)}
+                {journal.clipsCorners ? " CLIP" : " ROUND"}
+              </text>
+              <text
+                x={mapX(journal.start, length)}
+                y={journalDimY + 16}
+                textAnchor="start"
+                style={{ font: FONT_TINY }}
+                fill={DIM_SOFT}
+              >
+                START {fmtIn(journal.start)}
               </text>
             </g>
           )}
@@ -284,11 +295,12 @@ export default function ShaftDrawing({ config }: { config: ShaftConfig }) {
             );
           })}
 
-          <text x={PAD_L} y={vbH - 12} style={{ font: FONT_TINY }} fill="#6b7785">
-            Dashed box = tap drill · dashed OD = corner clip · drawing matches STEP / share URL
-          </text>
         </svg>
+        </div>
       </div>
+      <p className="px-4 pb-1 text-[11px] text-steel-500 sm:px-5">
+        Dashed box = tap drill · dashed OD = corner clip · drawing matches STEP / share URL
+      </p>
 
       <dl className="grid gap-x-4 gap-y-1.5 border-t border-steel-200 bg-white/70 px-4 py-3 text-xs sm:grid-cols-2 sm:px-5">
         {notes.map((note) => (
@@ -386,7 +398,6 @@ function TapCallout({
   endX,
   depthX,
   y,
-  side,
   label,
   depthLabel,
   extendFrom,
@@ -394,17 +405,15 @@ function TapCallout({
   endX: number;
   depthX: number;
   y: number;
-  side: "left" | "right";
   label: string;
   depthLabel: string;
   extendFrom: number;
 }) {
-  const tx = side === "left" ? Math.min(endX, depthX) - 4 : Math.max(endX, depthX) + 4;
-  const anchor = side === "left" ? "end" : "start";
+  const mid = (endX + depthX) / 2;
   return (
     <g>
       <DimLine x1={endX} x2={depthX} y={y} label={depthLabel} extendFrom={extendFrom} />
-      <text x={tx} y={y - 14} textAnchor={anchor} style={{ font: FONT_DIM }} fill={DIM}>
+      <text x={mid} y={y - 16} textAnchor="middle" style={{ font: FONT_DIM }} fill={DIM}>
         {label}
       </text>
     </g>

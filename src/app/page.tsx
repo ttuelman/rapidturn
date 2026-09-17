@@ -21,7 +21,7 @@ export default function HomePage() {
       <div className="mt-8">
         <Suspense
           fallback={
-            <div className="h-72 animate-pulse rounded-2xl bg-steel-100 sm:h-80 lg:h-[28rem]" />
+            <div className="h-[28rem] animate-pulse rounded-2xl bg-steel-100 sm:h-[32rem]" />
           }
         >
           <Configurator />
