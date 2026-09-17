@@ -7,6 +7,7 @@ describe("estimateShaft", () => {
   it("labels the quote as not for sale", () => {
     const q = estimateShaft(createDefaultConfig());
     assert.equal(q.notForSale, true);
+    assert.equal(q.cadOnly, false);
     assert.ok(q.total > 0);
   });
 
@@ -33,5 +34,10 @@ describe("estimateShaft", () => {
     assert.ok(grooves.total > base.total);
     assert.ok(journal.journal > 0);
     assert.ok(journal.total > base.total);
+  });
+
+  it("marks lengths over 8 in as CAD-only", () => {
+    const q = estimateShaft({ ...createDefaultConfig(), length: 12 });
+    assert.equal(q.cadOnly, true);
   });
 });

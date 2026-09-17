@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ECLIP_GROOVE,
   GROOVE_MAX_COUNT,
@@ -12,14 +13,18 @@ import {
   JOURNAL_DIAMETER_MIN,
   JOURNAL_LENGTH_MIN,
   JOURNAL_PRESETS,
+  LENGTH_CAD_MAX,
   LENGTH_MAX,
+  LENGTH_MFG_MAX,
   LENGTH_MIN,
   LENGTH_STEP,
+  CAD_ONLY_MESSAGE,
   MATERIAL_NAME,
   TAP_OPTIONS,
 } from "@/config/shaft";
 import { createDefaultConfig, newGrooveId } from "@/lib/defaults";
 import { estimateShaft } from "@/lib/estimate";
+import { configToQuery, hasConfigQuery, parseConfigQuery } from "@/lib/share";
 import type { ShaftConfig, TapId } from "@/lib/types";
 import { clampConfig, clampGroovePosition, defaultGroovePosition, validateShaft } from "@/lib/validate";
 import { EstimatePanel } from "./EstimatePanel";
@@ -55,13 +60,39 @@ const inputClass =
   "w-full rounded-lg border border-steel-200 bg-white px-3 py-2 text-steel-900 focus:border-rapid-500 focus:outline-none focus:ring-2 focus:ring-rapid-200";
 
 export function Configurator() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchKey = searchParams.toString();
   const [config, setConfig] = useState<ShaftConfig>(createDefaultConfig);
+  const skipWrite = useRef(true);
 
   const set = (patch: Partial<ShaftConfig> | ((c: ShaftConfig) => ShaftConfig)) => {
     setConfig((prev) =>
       clampConfig(typeof patch === "function" ? patch(prev) : { ...prev, ...patch }),
     );
   };
+
+  useEffect(() => {
+    const raw = window.location.search || searchKey;
+    if (!hasConfigQuery(raw)) return;
+    const incoming = parseConfigQuery(raw);
+    setConfig((prev) => {
+      if (configToQuery(prev) === configToQuery(incoming)) return prev;
+      skipWrite.current = true;
+      return incoming;
+    });
+  }, [searchKey]);
+
+  useEffect(() => {
+    if (skipWrite.current) {
+      skipWrite.current = false;
+      return;
+    }
+    const query = configToQuery(config);
+    if (searchKey === query) return;
+    router.replace(`${pathname}?${query}`, { scroll: false });
+  }, [config, pathname, router, searchKey]);
 
   const validation = useMemo(() => validateShaft(config), [config]);
   const estimate = useMemo(() => estimateShaft(config), [config]);
@@ -103,7 +134,8 @@ export function Configurator() {
         <section className="rounded-2xl border border-steel-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-steel-900">Length</h2>
           <p className="mt-1 text-sm text-steel-500">
-            Continuous, {LENGTH_STEP}&quot; steps. Hard max {LENGTH_MAX.toFixed(2)} in.
+            Continuous, {LENGTH_STEP}&quot; steps. Rapid Turn machines up to{" "}
+            {LENGTH_MFG_MAX.toFixed(2)} in. CAD / STEP up to {LENGTH_CAD_MAX.toFixed(2)} in.
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_8rem]">
             <input
@@ -129,6 +161,13 @@ export function Configurator() {
           <p className="mt-2 font-mono text-sm text-steel-600">
             {config.length.toFixed(4)} in · {(config.length * 25.4).toFixed(2)} mm
           </p>
+          {config.length > LENGTH_MFG_MAX && (
+            <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-relaxed text-amber-950 ring-1 ring-amber-200">
+              This length is <strong>CAD-only / not manufactured by Rapid Turn</strong>.{" "}
+              {CAD_ONLY_MESSAGE} Preview, estimate, and STEP still work. Buy stays disabled
+              above {LENGTH_MFG_MAX.toFixed(2)} in.
+            </p>
+          )}
         </section>
 
         <section className="rounded-2xl border border-steel-200 bg-white p-5 shadow-sm">

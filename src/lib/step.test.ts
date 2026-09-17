@@ -50,4 +50,12 @@ describe("buildStep", () => {
     assert.match(shaftFilename(config), /A1032/);
     assert.match(shaftFilename(config), /B1420/);
   });
+
+  it("builds STEP for a CAD-only length over 8 in", () => {
+    const config = { ...createDefaultConfig(), length: 12 };
+    const step = buildStep(config);
+    assert.match(step, /length=12\.0000/);
+    const zs = parsePoints(step).map((p) => p.z);
+    assert.ok(Math.max(...zs) >= 12 - 1e-6);
+  });
 });

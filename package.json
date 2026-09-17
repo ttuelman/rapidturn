@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test src/lib/geometry.test.ts src/lib/estimate.test.ts src/lib/step.test.ts src/lib/validate.test.ts"
+    "test": "tsx --test src/lib/geometry.test.ts src/lib/estimate.test.ts src/lib/step.test.ts src/lib/validate.test.ts src/lib/share.test.ts"
   },
   "dependencies": {
     "next": "^15.1.0",

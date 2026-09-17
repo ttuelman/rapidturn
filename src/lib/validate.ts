@@ -5,8 +5,10 @@ import {
   HEX_MODEL_AF,
   JOURNAL_DIAMETER_MIN,
   JOURNAL_LENGTH_MIN,
-  LENGTH_MAX,
+  LENGTH_CAD_MAX,
+  LENGTH_MFG_MAX,
   LENGTH_MIN,
+  CAD_ONLY_MESSAGE,
   TAP_OPTIONS,
 } from "@/config/shaft";
 import type { ShaftConfig, ValidationResult } from "./types";
@@ -22,8 +24,12 @@ export function validateShaft(config: ShaftConfig): ValidationResult {
     if (config.length < LENGTH_MIN) {
       errors.push(`Length must be at least ${LENGTH_MIN.toFixed(2)} in.`);
     }
-    if (config.length > LENGTH_MAX) {
-      errors.push(`Length cannot exceed ${LENGTH_MAX.toFixed(2)} in (service max).`);
+    if (config.length > LENGTH_CAD_MAX) {
+      errors.push(`Length cannot exceed ${LENGTH_CAD_MAX.toFixed(2)} in in this configurator.`);
+    } else if (config.length > LENGTH_MFG_MAX) {
+      warnings.push(
+        `${CAD_ONLY_MESSAGE} Buy (when it exists) stays disabled above ${LENGTH_MFG_MAX.toFixed(2)} in.`,
+      );
     }
   }
 
@@ -103,7 +109,7 @@ export function clampGroovePosition(position: number, length: number): number {
 }
 
 export function clampConfig(config: ShaftConfig): ShaftConfig {
-  const length = Math.min(LENGTH_MAX, Math.max(LENGTH_MIN, config.length));
+  const length = Math.min(LENGTH_CAD_MAX, Math.max(LENGTH_MIN, config.length));
   const grooves = config.grooves.map((g) => ({
     ...g,
     position: clampGroovePosition(g.position, length),

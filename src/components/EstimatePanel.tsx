@@ -1,8 +1,11 @@
 "use client";
 
+import { CAD_ONLY_MESSAGE, LENGTH_MFG_MAX } from "@/config/shaft";
 import { PRICING } from "@/config/pricing";
+import { configPath } from "@/lib/share";
 import { downloadStep } from "@/lib/step";
 import type { EstimateBreakdown, ShaftConfig, ValidationResult } from "@/lib/types";
+import { useState } from "react";
 
 function money(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -18,6 +21,19 @@ export function EstimatePanel({
   validation: ValidationResult;
 }) {
   const canDownload = validation.valid;
+  const cadOnly = estimate.cadOnly;
+  const [copied, setCopied] = useState(false);
+
+  const copyLink = async () => {
+    const url = `${window.location.origin}${configPath(config)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      window.prompt("Copy this config URL", url);
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  };
 
   return (
     <aside className="rounded-2xl border border-rapid-200 bg-gradient-to-b from-white to-rapid-50 p-5 shadow-sm lg:p-6">
@@ -25,13 +41,20 @@ export function EstimatePanel({
         <div>
           <h2 className="text-lg font-semibold text-steel-900">Price estimate</h2>
           <p className="mt-1 text-xs font-medium uppercase tracking-wide text-amber-700">
-            Not for sale
+            {cadOnly ? "CAD-only — not manufactured by Rapid Turn" : "Not for sale"}
           </p>
         </div>
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 ring-1 ring-amber-200">
-          Preview quote
+          {cadOnly ? "CAD only" : "Preview quote"}
         </span>
       </div>
+
+      {cadOnly && (
+        <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm leading-relaxed text-amber-950 ring-1 ring-amber-200">
+          {CAD_ONLY_MESSAGE} Preview and STEP still work. Buy stays off above{" "}
+          {LENGTH_MFG_MAX.toFixed(2)} in.
+        </p>
+      )}
 
       {validation.errors.length > 0 && (
         <ul className="mt-4 space-y-1 rounded-xl bg-red-50 p-3 text-sm text-red-700">
@@ -85,14 +108,27 @@ export function EstimatePanel({
 
       <button
         type="button"
+        onClick={copyLink}
+        className="mt-2 w-full rounded-xl border border-steel-200 bg-white px-4 py-3 text-sm font-semibold text-steel-800 hover:bg-steel-50"
+      >
+        {copied ? "Link copied" : "Copy shareable link"}
+      </button>
+
+      <button
+        type="button"
         disabled
-        title="Ordering is not open yet"
+        title={
+          cadOnly
+            ? `Buy will stay disabled above ${LENGTH_MFG_MAX.toFixed(2)} in`
+            : "Ordering is not open yet"
+        }
         className="mt-2 w-full cursor-not-allowed rounded-xl border border-steel-200 bg-white px-4 py-3 text-sm font-semibold text-steel-400"
       >
-        Buy — coming later
+        {cadOnly ? "Buy — not manufactured at this length" : "Buy — coming later"}
       </button>
       <p className="mt-2 text-center text-xs text-steel-500">
-        No checkout, waitlist, or payment in v1. STEP matches this configuration.
+        No checkout, waitlist, or payment in v1. STEP matches this configuration. Edit the URL
+        params to come back later.
       </p>
     </aside>
   );

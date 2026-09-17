@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { ECLIP_GROOVE, HEX_MODEL_AF, LENGTH_MAX } from "../config/shaft";
+import { ECLIP_GROOVE, HEX_MODEL_AF, LENGTH_MFG_MAX } from "../config/shaft";
 import { createDefaultConfig } from "./defaults";
 import {
   buildIntervals,
@@ -40,8 +40,8 @@ describe("buildShaftMesh", () => {
     assert.ok(mesh.faces.length > 20);
   });
 
-  it("hard-caps geometry at 8.00 in when asked", () => {
-    const mesh = buildShaftMesh({ ...createDefaultConfig(), length: LENGTH_MAX });
+  it("builds an 8.00 in manufacturing-length shaft", () => {
+    const mesh = buildShaftMesh({ ...createDefaultConfig(), length: LENGTH_MFG_MAX });
     assert.ok(Math.abs(mesh.bbox.max.z - 8) < 1e-6);
   });
 
