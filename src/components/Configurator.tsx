@@ -18,6 +18,7 @@ import {
   LENGTH_MFG_MAX,
   LENGTH_MIN,
   LENGTH_STEP,
+  CAD_ONLY_MESSAGE,
   MATERIAL_NAME,
   TAP_OPTIONS,
 } from "@/config/shaft";
@@ -152,10 +153,9 @@ export function Configurator() {
           </p>
           {config.length > LENGTH_MFG_MAX && (
             <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-relaxed text-amber-950 ring-1 ring-amber-200">
-              This length is <strong>CAD-only</strong>. Rapid Turn machines shafts up to{" "}
-              {LENGTH_MFG_MAX.toFixed(2)} in; longer configs are for your CAD or another shop.
-              Preview, estimate, and STEP still work. Buy stays disabled above{" "}
-              {LENGTH_MFG_MAX.toFixed(2)} in.
+              This length is <strong>CAD-only / not manufactured by Rapid Turn</strong>.{" "}
+              {CAD_ONLY_MESSAGE} Preview, estimate, and STEP still work. Buy stays disabled
+              above {LENGTH_MFG_MAX.toFixed(2)} in.
             </p>
           )}
         </section>

@@ -12,7 +12,7 @@ describe("validateShaft", () => {
   it("allows CAD lengths over 8 in and flags them as CAD-only", () => {
     const r = validateShaft({ ...createDefaultConfig(), length: 12 });
     assert.equal(r.valid, true);
-    assert.ok(r.warnings.some((w) => /CAD-only/.test(w)));
+    assert.ok(r.warnings.some((w) => /machines up to 8 in/.test(w)));
   });
 
   it("rejects length over the 36 in CAD soft max", () => {

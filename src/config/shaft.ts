@@ -20,11 +20,19 @@ export const MATERIAL_ID = "al7075t6";
 export const LENGTH_MIN = 1.0;
 /** Rapid Turn machines up to this length. Longer is CAD-only. */
 export const LENGTH_MFG_MAX = 8.0;
-/** Soft max for the configurator / STEP download. */
+/** Soft max for the configurator / STEP download. Do not treat as a service cap. */
 export const LENGTH_CAD_MAX = 36.0;
 export const LENGTH_MAX = LENGTH_CAD_MAX;
 export const LENGTH_DEFAULT = 4.0;
 export const LENGTH_STEP = 0.0625;
+
+/** Locked MVP wording for lengths above LENGTH_MFG_MAX. */
+export const CAD_ONLY_MESSAGE =
+  "Rapid Turn machines up to 8 in — longer STEP is for your CAD / other shop.";
+
+export function isCadOnlyLength(length: number): boolean {
+  return length > LENGTH_MFG_MAX;
+}
 
 /** Flat-top hex: first vertex at 0°, first flat normal at 30°. */
 export const HEX_FLAT_NORMAL0 = Math.PI / 6;

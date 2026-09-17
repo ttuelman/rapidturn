@@ -13,8 +13,8 @@ export default function AboutPage() {
         until ordering opens.
       </p>
       <p className="mt-4 text-steel-600 leading-relaxed">
-        Rapid Turn machines shafts up to 8.00 in. Longer configs stay available here for CAD
-        or another shop — preview, estimate, and STEP still work; Buy stays off above 8 in.
+        Rapid Turn machines up to 8 in — longer STEP is for your CAD / other shop. Preview,
+        estimate, and download still work above 8.00 in; Buy stays off at those lengths.
       </p>
       <p className="mt-4 text-steel-600 leading-relaxed">
         Out of this release: snap-ring / axial circlip paths, cross-drill, anodize, 3/8&quot;

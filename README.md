@@ -10,7 +10,7 @@ Nothing is sold here. There is no Stripe, waitlist, or checkout. Buy is gated fo
 |------|--------|
 | Profile | 0.5 in hex. **Modeled AF 0.4975 in** (FRC fit 0.496–0.499 in) |
 | Material | 7075-T6 aluminum (display only — one material) |
-| Length | 1.00–**36.00 in** in CAD (0.0625 in steps). **Rapid Turn machines ≤ 8.00 in**; longer is CAD-only. Default 4.00 in |
+| Length | Configure/download STEP for any length (CAD soft max **36.00 in**). **Manufacturing / Buy ≤ 8.00 in.** Longer configs are CAD-only. Default 4.00 in |
 | End taps | Each end independently: None, **#10-32 × 0.50 in**, **1/4-20 × 0.50 in** |
 | E-clip grooves | 0–N, positionable from End A. Side-mount / radial install (no corner round-over) |
 | Journal | One turn-down: start, length, target round Ø (default ThunderHex **0.541 in / 13.75 mm**, or **0.500 in**) |

@@ -8,6 +8,7 @@ import {
   LENGTH_CAD_MAX,
   LENGTH_MFG_MAX,
   LENGTH_MIN,
+  CAD_ONLY_MESSAGE,
   TAP_OPTIONS,
 } from "@/config/shaft";
 import type { ShaftConfig, ValidationResult } from "./types";
@@ -27,7 +28,7 @@ export function validateShaft(config: ShaftConfig): ValidationResult {
       errors.push(`Length cannot exceed ${LENGTH_CAD_MAX.toFixed(2)} in in this configurator.`);
     } else if (config.length > LENGTH_MFG_MAX) {
       warnings.push(
-        `Rapid Turn machines shafts up to ${LENGTH_MFG_MAX.toFixed(2)} in. This longer config is CAD-only — download the STEP for your CAD or another shop. Buy (when it exists) stays disabled above ${LENGTH_MFG_MAX.toFixed(2)} in.`,
+        `${CAD_ONLY_MESSAGE} Buy (when it exists) stays disabled above ${LENGTH_MFG_MAX.toFixed(2)} in.`,
       );
     }
   }

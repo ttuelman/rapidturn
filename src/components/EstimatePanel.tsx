@@ -1,6 +1,6 @@
 "use client";
 
-import { LENGTH_MFG_MAX } from "@/config/shaft";
+import { CAD_ONLY_MESSAGE, LENGTH_MFG_MAX } from "@/config/shaft";
 import { PRICING } from "@/config/pricing";
 import { configPath } from "@/lib/share";
 import { downloadStep } from "@/lib/step";
@@ -41,7 +41,7 @@ export function EstimatePanel({
         <div>
           <h2 className="text-lg font-semibold text-steel-900">Price estimate</h2>
           <p className="mt-1 text-xs font-medium uppercase tracking-wide text-amber-700">
-            {cadOnly ? "CAD-only — not manufactured" : "Not for sale"}
+            {cadOnly ? "CAD-only — not manufactured by Rapid Turn" : "Not for sale"}
           </p>
         </div>
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 ring-1 ring-amber-200">
@@ -51,8 +51,7 @@ export function EstimatePanel({
 
       {cadOnly && (
         <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm leading-relaxed text-amber-950 ring-1 ring-amber-200">
-          Rapid Turn machines shafts up to {LENGTH_MFG_MAX.toFixed(2)} in. This longer config is
-          for CAD or another shop. Preview, estimate, and STEP still work. Buy stays off above{" "}
+          {CAD_ONLY_MESSAGE} Preview and STEP still work. Buy stays off above{" "}
           {LENGTH_MFG_MAX.toFixed(2)} in.
         </p>
       )}

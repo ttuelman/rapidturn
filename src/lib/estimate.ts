@@ -1,4 +1,4 @@
-import { HEX_MODEL_AF, LENGTH_MFG_MAX } from "@/config/shaft";
+import { HEX_MODEL_AF, isCadOnlyLength } from "@/config/shaft";
 import { PRICING } from "@/config/pricing";
 import type { EstimateBreakdown, ShaftConfig } from "./types";
 import { hexAcrossCorners } from "./geometry";
@@ -42,6 +42,6 @@ export function estimateShaft(config: ShaftConfig): EstimateBreakdown {
     setup: roundMoney(setup),
     total: roundMoney(total),
     notForSale: true,
-    cadOnly: config.length > LENGTH_MFG_MAX,
+    cadOnly: isCadOnlyLength(config.length),
   };
 }

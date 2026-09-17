@@ -28,6 +28,13 @@ describe("shareable config URLs", () => {
     assert.match(configPath(config), /^\//);
   });
 
+  it("round-trips a CAD-only length over 8 in", () => {
+    const again = parseConfigQuery("l=12&ea=10-32&eb=none");
+    assert.equal(again.length, 12);
+    assert.equal(again.endA, "10-32");
+    assert.match(configToQuery(again), /l=12/);
+  });
+
   it("opens every use-case preset from its query string", () => {
     for (const uc of USE_CASES) {
       const parsed = parseConfigQuery(configToQuery(uc.config));
