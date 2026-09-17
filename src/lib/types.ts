@@ -34,6 +34,7 @@ export interface EstimateBreakdown {
   setup: number;
   total: number;
   notForSale: true;
+  cadOnly: boolean;
 }
 
 export interface ValidationResult {

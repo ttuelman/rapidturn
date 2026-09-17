@@ -1,4 +1,5 @@
 import { Configurator } from "@/components/Configurator";
+import { UseCaseCards } from "@/components/UseCaseCards";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
       <div className="mt-8">
         <Configurator />
       </div>
+      <UseCaseCards />
     </div>
   );
 }
