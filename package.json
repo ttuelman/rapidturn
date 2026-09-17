@@ -6,24 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsx --test src/lib/geometry.test.ts src/lib/estimate.test.ts src/lib/step.test.ts src/lib/validate.test.ts"
   },
   "dependencies": {
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "uuid": "^11.0.3"
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/uuid": "^10.0.0",
+    "@types/three": "^0.170.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",
     "eslint-config-next": "^15.1.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }

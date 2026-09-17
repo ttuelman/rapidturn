@@ -1,26 +1,43 @@
 # Rapid Turn
 
-Instant-quote, buy-now lathe parts ordering for minimal human interaction per order.
+Free web configurator for **0.5 in 7075-T6 FRC hex shafts**. Set length, tap each end, add E-clip grooves and a turn-down journal, inspect a live 3D preview, read a **not-for-sale** estimate, and download a STEP that matches the solid on screen.
 
-Customers choose from a limited set of materials and single-setup part features, receive a real-time quote, and click **Buy Now**. The backend generates Haas-compatible G-code, assigns an order/program number, and queues the job for the Haas CL-1 chucker lathe.
+Nothing is sold here. There is no Stripe, waitlist, or checkout. Buy is gated for later.
 
-## MVP Scope
+## Locked v1
 
-| Constraint | Value |
-|------------|-------|
-| Machine | Haas CL-1 chucker lathe |
-| Materials | 6061 Aluminum, 1018 Cold-Rolled Steel |
-| Max bar diameter | 0.5" |
-| Setups | 1 (single setup only) |
-| Features | OD profile (up to 3 steps), front/back chamfer, face, part-off |
+| Item | Value |
+|------|--------|
+| Profile | 0.5 in hex. **Modeled AF 0.4975 in** (FRC fit 0.496–0.499 in) |
+| Material | 7075-T6 aluminum (display only — one material) |
+| Length | 1.00–**8.00 in** continuous, 0.0625 in steps. Hard cap 8 in. Default 4.00 in |
+| End taps | Each end independently: None, **#10-32 × 0.50 in**, **1/4-20 × 0.50 in** |
+| E-clip grooves | 0–N, positionable from End A. Side-mount / radial install (no corner round-over) |
+| Journal | One turn-down: start, length, target round Ø (default ThunderHex **0.541 in / 13.75 mm**, or **0.500 in**) |
+| Out of scope | Snap-ring / axial circlip, cross-drill, anodize, 3/8 in, steel, keyways, live checkout |
+
+Tap holes in the preview and STEP are **tap-drill cylinders** (#21 = 0.159 in for #10-32, #7 = 0.201 in for 1/4-20). Threads are not modeled.
+
+### E-clip assumption
+
+Published-compatible 1/2 in E-style ring, **McMaster-Carr 97633A160** (E-Style External Retaining Ring for 1/2 in shaft):
+
+- Groove diameter **0.396 in**
+- Groove width **0.046 in**
+- Ring thickness 0.042 in
+
+Confirm against the clip you will install. Cited in the configurator UI.
+
+A journal Ø ≥ modeled AF clips hex **corners** to that circle (ThunderHex-style) and leaves flats. Smaller Ø becomes a true round journal. Hex outside the journal remains as a shoulder/stop.
 
 ## Stack
 
-- **Next.js 15** (App Router) + TypeScript + Tailwind CSS
-- File-based order persistence (`data/orders.json`)
-- REST API for quotes, orders, G-code download, and machine queue
+- **Next.js 15** (App Router) + TypeScript + Tailwind CSS + React 19
+- **Three.js** for the preview (OrbitControls, no extra UI kit)
+- **Client-side STEP** (no CAD kernel, no API). `src/lib/geometry.ts` builds one watertight mesh; `src/lib/step.ts` writes an AP203 `MANIFOLD_SOLID_BREP` in **inches**. Preview and download share that mesh, so the file matches the config.
+- Placeholder rates live in **`src/config/pricing.ts`** only.
 
-## Getting Started
+## Run locally
 
 ```bash
 npm install
@@ -29,44 +46,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+```bash
+npm test          # geometry, estimate, STEP, validation
+npm run build     # production build
+npm start
+```
+
 ## Pages
 
-- `/` — Landing page
-- `/shop` — Part configurator with live quote and Buy Now
-- `/machine` — Production queue dashboard for the CL-1
+- `/` — configurator: controls, 3D preview, estimate, Download STEP
+- `/about` — short product note
 
-## API
+There is no shop checkout, machine queue, or G-code path in v1.
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/quote` | POST | Real-time quote from `PartSpec` JSON |
-| `/api/orders` | GET/POST | List or create orders |
-| `/api/gcode/[id]` | GET | Download G-code for an order |
-| `/api/machine` | GET | View queue; `?next=true` returns next job for DNC |
-| `/api/machine` | POST | Update job status (`dispatch`, `start`, `complete`, `fail`) |
+## STEP notes
 
-## Order Flow
+- Generated in the browser on **Download STEP**.
+- Header `FILE_DESCRIPTION` lists length, taps, E-clip P/N and positions, and journal.
+- Units: **INCH** (`CONVERSION_BASED_UNIT`).
+- Faceted planar B-rep (48-sample rings) so hex flats stay exact and rounds stay close. Good for robot CAD import; not a substitute for a CAM feature tree.
 
-1. Customer configures part on `/shop`
-2. Quote recalculates on every change (debounced 300ms)
-3. **Buy Now** creates order, generates G-code (`O####` program number), queues for `haas-cl1-01`
-4. Order auto-dispatches to machine queue
-5. Shop floor uses `/machine` or polls `/api/machine?next=true` to load programs
-
-## G-code
-
-Programs are generated in standard Haas inch format (G20) with:
-
-- Front face
-- OD turning per segment (Z-negative from chuck)
-- Optional chamfers
-- Part-off cycle
-- Program number matches order (`RT-1001` → `O1001`)
-
-## Future Work
-
-- Stripe/payment integration
-- MTConnect or Haas Ethernet DNC push
-- Drawing upload with feature extraction
-- Tolerance and finish options
-- Multi-machine routing
+If a future CAM pipeline needs kernel-quality NURBS, swap `buildStep()` for OpenCascade/replicad and keep `buildShaftMesh()` as the preview source of truth.

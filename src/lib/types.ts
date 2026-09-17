@@ -1,77 +1,43 @@
-export type MaterialId = "al6061" | "steel1018";
+import type { TapId } from "@/config/shaft";
 
-export type StockDiameter = 0.25 | 0.375 | 0.5;
+export type { TapId };
 
-export interface Material {
-  id: MaterialId;
-  name: string;
-  densityLbPerCuIn: number;
-  costPerLb: number;
-  surfaceSpeedSfm: number;
-  feedPerRev: number;
-  description: string;
-}
-
-export interface OdSegment {
+export interface EclipGroove {
   id: string;
-  diameter: number;
-  length: number;
+  /** Axial position of the groove center, inches from End A (z = 0). */
+  position: number;
 }
 
-export interface ChamferSpec {
+export interface JournalSpec {
   enabled: boolean;
-  size: number;
+  /** Start of the turned section, inches from End A. */
+  start: number;
+  length: number;
+  /** Target round clip diameter (in). ≥ AF clips corners; < AF is a true journal. */
+  diameter: number;
 }
 
-export interface PartSpec {
-  materialId: MaterialId;
-  stockDiameter: StockDiameter;
-  segments: OdSegment[];
-  frontChamfer: ChamferSpec;
-  backChamfer: ChamferSpec;
-  quantity: number;
+export interface ShaftConfig {
+  length: number;
+  endA: TapId;
+  endB: TapId;
+  grooves: EclipGroove[];
+  journal: JournalSpec;
 }
 
-export interface QuoteBreakdown {
-  materialCost: number;
-  machiningCost: number;
-  setupCost: number;
-  quantityDiscount: number;
-  unitPrice: number;
-  totalPrice: number;
-  estimatedMinutes: number;
-  leadTimeDays: number;
+export interface EstimateBreakdown {
+  material: number;
+  cutoff: number;
+  taps: number;
+  grooves: number;
+  journal: number;
+  setup: number;
+  total: number;
+  notForSale: true;
 }
 
-export type OrderStatus =
-  | "pending_payment"
-  | "queued"
-  | "dispatched"
-  | "running"
-  | "complete"
-  | "failed";
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  programNumber: string;
-  partSpec: PartSpec;
-  quote: QuoteBreakdown;
-  status: OrderStatus;
-  customerEmail: string;
-  gcode: string;
-  createdAt: string;
-  updatedAt: string;
-  machineId: string;
-}
-
-export interface MachineJob {
-  orderId: string;
-  orderNumber: string;
-  programNumber: string;
-  gcode: string;
-  materialName: string;
-  quantity: number;
-  status: OrderStatus;
-  queuedAt: string;
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
 }
