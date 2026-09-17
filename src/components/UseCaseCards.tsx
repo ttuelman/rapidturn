@@ -1,3 +1,5 @@
+"use client";
+
 import { USE_CASE_DISCLAIMER, USE_CASES } from "@/config/useCases";
 import { configPath } from "@/lib/share";
 
