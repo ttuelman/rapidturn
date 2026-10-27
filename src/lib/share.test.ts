@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { USE_CASES } from "../config/useCases";
 import { createDefaultConfig } from "./defaults";
-import { configPath, configToQuery, parseConfigQuery } from "./share";
+import { configPath, configToQuery, parseConfigQuery, siteBasePath } from "./share";
 
 describe("shareable config URLs", () => {
   it("round-trips length, both taps, grooves, and a journal", () => {
@@ -26,6 +26,26 @@ describe("shareable config URLs", () => {
     assert.equal(again.journal.enabled, true);
     assert.equal(again.journal.diameter, 0.541);
     assert.match(configPath(config), /^\//);
+    assert.equal(siteBasePath(), "");
+  });
+
+  it("prefixes share links with the Pages base path", () => {
+    const prev = process.env.NEXT_PUBLIC_BASE_PATH;
+    process.env.NEXT_PUBLIC_BASE_PATH = "/rapidturn/";
+    try {
+      assert.equal(siteBasePath(), "/rapidturn");
+      const path = configPath({ ...createDefaultConfig(), length: 6.5, endA: "10-32" });
+      assert.equal(path.startsWith("/rapidturn/?"), true);
+      assert.match(path, /(?:^|[?&])l=6\.5(?:&|$)/);
+      assert.match(path, /(?:^|[?&])ea=10-32(?:&|$)/);
+      const query = path.slice(path.indexOf("?") + 1);
+      const again = parseConfigQuery(query);
+      assert.equal(again.length, 6.5);
+      assert.equal(again.endA, "10-32");
+    } finally {
+      if (prev === undefined) delete process.env.NEXT_PUBLIC_BASE_PATH;
+      else process.env.NEXT_PUBLIC_BASE_PATH = prev;
+    }
   });
 
   it("round-trips a CAD-only length over 8 in", () => {

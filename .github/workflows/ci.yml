@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Static export for GitHub Pages
+        env:
+          GITHUB_PAGES: "true"
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: |
+          rm -rf .next out
+          npm run build
+          test -f out/index.html
+          test -f out/about/index.html
+          test -f out/.nojekyll
+          grep -q "/${{ github.event.repository.name }}/_next/" out/index.html

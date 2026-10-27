@@ -39,6 +39,14 @@ A journal Ø ≥ modeled AF clips hex **corners** to that circle (ThunderHex-sty
 - Placeholder rates live in **`src/config/pricing.ts`** only.
 - Shareable config URLs (no login): `/?l=4.375&ea=10-32&eb=10-32&g=0.35,3.65&j=0.75,1.5,0.541`
 
+## Demo
+
+GitHub Pages publishes a static export of `main`:
+
+[https://ttuelman.github.io/rapidturn/](https://ttuelman.github.io/rapidturn/)
+
+The drawing, 3D preview, estimate, and STEP download all run in the browser. Share links and “Open this config” stay under `/rapidturn`. Workflow: `.github/workflows/pages.yml` (`GITHUB_PAGES=true`, `BASE_PATH=/rapidturn`). Local `npm run dev` and `npm start` are unchanged and stay at `/`.
+
 ## Run locally
 
 ```bash
