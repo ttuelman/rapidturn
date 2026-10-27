@@ -26,8 +26,18 @@ export function configToQuery(config: ShaftConfig): string {
   return p.toString();
 }
 
+/**
+ * Path prefix for GitHub project Pages (`/rapidturn`). Empty locally and on a user site.
+ * Inlined from `BASE_PATH` at build time via `next.config.ts`.
+ */
+export function siteBasePath(): string {
+  const raw = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  if (!raw || raw === "/") return "";
+  return raw.endsWith("/") ? raw.slice(0, -1) : raw;
+}
+
 export function configPath(config: ShaftConfig): string {
-  return `/?${configToQuery(config)}`;
+  return `${siteBasePath()}/?${configToQuery(config)}`;
 }
 
 export function parseConfigQuery(search: string): ShaftConfig {
