@@ -28,11 +28,12 @@ import { configToQuery, hasConfigQuery, parseConfigQuery } from "@/lib/share";
 import type { ShaftConfig, TapId } from "@/lib/types";
 import { clampConfig, clampGroovePosition, defaultGroovePosition, validateShaft } from "@/lib/validate";
 import { EstimatePanel } from "./EstimatePanel";
+import ShaftDrawing from "./ShaftDrawing";
 
 const ShaftPreview = dynamic(() => import("./ShaftPreview"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-72 items-center justify-center rounded-2xl bg-[#11161c] text-sm text-white/60 sm:h-80 lg:h-[28rem]">
+    <div className="flex h-56 items-center justify-center rounded-2xl bg-[#11161c] text-sm text-white/60 sm:h-64 lg:h-80">
       Loading 3D preview…
     </div>
   ),
@@ -108,8 +109,24 @@ export function Configurator() {
   return (
     <div className="grid gap-6 lg:grid-cols-12">
       <div className="space-y-5 lg:col-span-7">
+        <section>
+          <ShaftDrawing config={config} />
+        </section>
+
         <section className="overflow-hidden rounded-2xl border border-steel-200 bg-white shadow-sm">
-          <ShaftPreview config={config} />
+          <div className="flex items-baseline justify-between gap-3 px-4 pt-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-steel-500">
+                3D — spatial feel
+              </p>
+              <p className="text-xs text-steel-500">
+                Orbit to inspect. The drawing above is what you configure and download.
+              </p>
+            </div>
+          </div>
+          <div className="p-2 pt-2">
+            <ShaftPreview config={config} />
+          </div>
         </section>
 
         <section className="rounded-2xl border border-steel-200 bg-white p-5 shadow-sm">

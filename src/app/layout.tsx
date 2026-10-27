@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Rapid Turn — FRC hex shaft configurator",
   description:
-    "Configure a 0.5 inch 7075-T6 FRC hex shaft, preview it in 3D, see a price estimate, and download a matching STEP. Free — not for sale.",
+    "Configure a 0.5 inch 7075-T6 FRC hex shaft, inspect a live 2D drawing and 3D preview, see a price estimate, and download a matching STEP. Free — not for sale.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

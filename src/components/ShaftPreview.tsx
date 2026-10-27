@@ -142,7 +142,7 @@ export default function ShaftPreview({ config }: { config: ShaftConfig }) {
   }, [config]);
 
   return (
-    <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-[#11161c] sm:h-80 lg:h-[28rem]">
+    <div className="relative h-56 w-full overflow-hidden rounded-xl bg-[#11161c] sm:h-64 lg:h-80">
       <div ref={hostRef} className="h-full w-full" />
       <p className="pointer-events-none absolute bottom-3 left-3 text-[11px] uppercase tracking-wider text-white/50">
         Drag to orbit · scroll to zoom
